@@ -2,6 +2,7 @@ package com.cn.cnEvent.controller;
 
 import com.cn.cnEvent.entity.Event;
 import com.cn.cnEvent.entity.EventScheduleDetail;
+import com.cn.cnEvent.entity.Ticket;
 import com.cn.cnEvent.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -11,22 +12,19 @@ import java.util.List;
 @RequestMapping("/event")
 public class EventController {
 	
-	/*
-	       • 
-API `GET "/event/eventScheduleDetail/{id}" (@PathVariable Long id) `
-: It fetches EventScheduleDetail of an Event for the given eventId.
-
-      • 
-API `DELETE "/event/delete/eventScheduleDetail/{id}" (@PathVariable Long id) `
-: It deletes EventScheduleDetail of an Event for the given eventScheduleDetailId.
-
-      • 
-API `GET "/event/location/{location}" (@PathVariable String location) `
-: It fetches the list of all Events by the given location. Note the location fetch should be case-insensitive.
-	 */
 	@Autowired
 	EventService eventService;
 
+	@GetMapping("/allTickets/{id}")
+	public List<Ticket> getAllTicketsByEventId(@PathVariable Long id){
+		return eventService.getAllTicketsByEventId(id);	
+	}
+  
+	@GetMapping("/Tickets/PriceGreaterThan/{price}")
+	public List<Event> getEventsByTicketPrice(@PathVariable Long price){
+		return eventService.getEventsByTicketPrice(price);
+	}
+	
 	@GetMapping("/{id}")
 	public Event getEventById(@PathVariable Long id)
 	{

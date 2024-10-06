@@ -3,6 +3,7 @@ package com.cn.cnEvent.service;
 import com.cn.cnEvent.dal.EventDAL;
 import com.cn.cnEvent.entity.Event;
 import com.cn.cnEvent.entity.EventScheduleDetail;
+import com.cn.cnEvent.entity.Ticket;
 import com.cn.cnEvent.exception.ElementAlreadyExistException;
 import com.cn.cnEvent.exception.InvalidInputException;
 import com.cn.cnEvent.exception.NotFoundException;
@@ -23,17 +24,17 @@ public class EventService {
 
 	@Transactional
 	public Event getEventById(Long id) {
-		Event event=eventDAL.getById(id);
-		if(event==null){
-			throw new NotFoundException("No event found with id:  "+id);
+		Event event = eventDAL.getById(id);
+		if (event == null) {
+			throw new NotFoundException("No event found with id:  " + id);
 		}
 		return event;
 	}
 
 	@Transactional
 	public List<Event> getAllEvents() {
-		List<Event> events=eventDAL.getAllEvents();
-		if(events==null){
+		List<Event> events = eventDAL.getAllEvents();
+		if (events == null) {
 
 			throw new NotFoundException("No events found.");
 		}
@@ -43,19 +44,15 @@ public class EventService {
 	@Transactional
 	public String saveEvent(Event newEvent) {
 
-		List<Event> allEvents  = getAllEvents();
-		for(Event event : allEvents)
-		{
-			if(Objects.equals(event.getId(), newEvent.getId()))
-			{
+		List<Event> allEvents = getAllEvents();
+		for (Event event : allEvents) {
+			if (Objects.equals(event.getId(), newEvent.getId())) {
 				throw new ElementAlreadyExistException("This event already exist.");
 			}
 		}
 		try {
 			return eventDAL.save(newEvent);
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			throw new InvalidInputException("The input entity for event is invalid.");
 		}
 	}
@@ -64,30 +61,27 @@ public class EventService {
 	public String delete(Long id) {
 		List<Event> allEvents = getAllEvents();
 
-		boolean isEntityPresent=false;
-		for(Event event : allEvents)
-		{
+		boolean isEntityPresent = false;
+		for (Event event : allEvents) {
 			if (Objects.equals(event.getId(), id)) {
 				isEntityPresent = true;
 			}
 		}
-		if(!isEntityPresent)
-		{
+		if (!isEntityPresent) {
 			throw new InvalidInputException("This event doesn't exist.");
 		}
-		try{
+		try {
 			return eventDAL.delete(id);
-		}
-		catch (Exception e){
+		} catch (Exception e) {
 			throw new InvalidInputException("Error in deleting event.");
 		}
 	}
+
 	@Transactional
 	public String update(Event updateEvent) {
-		try{
+		try {
 			return eventDAL.update(updateEvent);
-		}
-		catch (Exception e){
+		} catch (Exception e) {
 			throw new InvalidInputException("Error in deleting eventScheduleDetail from event.");
 		}
 	}
@@ -95,9 +89,8 @@ public class EventService {
 	@Transactional
 	public EventScheduleDetail getEventScheduleDetail(Long eventID) {
 		EventScheduleDetail eventScheduleDetail = eventDAL.getEventScheduleDetail(eventID);
-		if(eventScheduleDetail==null)
-		{
-			throw new NotFoundException("No event detail found for payment having paymentId: "+eventID);
+		if (eventScheduleDetail == null) {
+			throw new NotFoundException("No event detail found for payment having paymentId: " + eventID);
 		}
 		return eventScheduleDetail;
 	}
@@ -106,46 +99,34 @@ public class EventService {
 	public List<Event> getEventsByLocation(String location) {
 		List<Event> allEvents = getAllEvents();
 
-        List<Event> eventsByLocation = new ArrayList<>();
-        for (Event event : allEvents) {
-            if (event.getEventScheduleDetail().getLocation().equalsIgnoreCase(location)) {
-                eventsByLocation.add(event);
-            }
-     	}
-        return eventsByLocation;
-	}
-   @Transactional
-	public String deleteDetail(Long id) {
-		
-	   try{
-			return eventDAL.deleteDetail(id);
+		List<Event> eventsByLocation = new ArrayList<>();
+		for (Event event : allEvents) {
+			if (event.getEventScheduleDetail().getLocation().equalsIgnoreCase(location)) {
+				eventsByLocation.add(event);
+			}
 		}
-		catch (Exception e){
+		return eventsByLocation;
+	}
+
+	@Transactional
+	public String deleteDetail(Long id) {
+
+		try {
+			return eventDAL.deleteDetail(id);
+		} catch (Exception e) {
 			throw new InvalidInputException("Error in deleting eventScheduleDetail from event.");
 		}
-	   
-//		List<Event> allEvents = getAllEvents();
-//
-//		boolean isEntityPresent=false;
-//		for(Event event : allEvents)
-//		{
-//			if (Objects.equals(event.getId(), id)) {
-//				isEntityPresent = true;
-//			}
-//		}
-//		if(!isEntityPresent)
-//		{
-//			throw new InvalidInputException("This event doesn't exist.");
-//		}
-//		try{
-//			return eventDAL.deleteDetail(id);
-//		}
-//		catch (Exception e){
-//			throw new InvalidInputException("Error in deleting event.");
-//		}
+
 	}
 
+	@Transactional
+	public List<Ticket> getAllTicketsByEventId(Long id) {
+		return eventDAL.getAllTicketsByEventId(id);
+	}
 	
-
+	@Transactional
+	public List<Event> getEventsByTicketPrice(Long price){
+		return eventDAL.getEventsByTicketPrice(price);
+	}
 
 }

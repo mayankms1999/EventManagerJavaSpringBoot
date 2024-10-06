@@ -2,6 +2,8 @@ package com.cn.cnEvent.dal;
 
 import com.cn.cnEvent.entity.Event;
 import com.cn.cnEvent.entity.EventScheduleDetail;
+import com.cn.cnEvent.entity.Ticket;
+import com.cn.cnEvent.exception.NotFoundException;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,18 +97,36 @@ public class EventDALImpl implements EventDAL {
         } catch (NoResultException ex) {
             return "EventScheduleDetail with id " + id + " does not exist";
         }
-		
-//		 Session session = entityManager.unwrap(Session.class);
-//		 EventScheduleDetail eventDetails = session.get(EventScheduleDetail.class, id);
-//		for (Event event : getAllEvents()) {
-//            if(event.getEventScheduleDetail()!=null && event.getEventScheduleDetail().getId().equals(id)){
-//            	
-//                event.setEventScheduleDetail(null);
-//                save(event);
-//            }
-//        }
-//        session.delete(eventDetails);
-//		return "Deleted successfully";
+	}
+
+	@Override
+	public List<Ticket> getAllTicketsByEventId(Long id) {
+		Session session = entityManager.unwrap(Session.class);
+	    List<Ticket> tickets = session.createQuery(
+	            "SELECT t FROM Ticket t WHERE t.event.id = :eventId", Ticket.class)
+	            .setParameter("eventId", id)
+	            .getResultList();
+
+	    if (tickets.isEmpty()) {
+	        throw new NotFoundException("No tickets found for event with ID: " + id);
+	    }
+
+	    return tickets;
+	}
+
+	@Override
+	public List<Event> getEventsByTicketPrice(Long price) {
+		  Session session = entityManager.unwrap(Session.class);
+		    List<Event> events = session.createQuery(
+		            "SELECT DISTINCT t.event FROM Ticket t WHERE t.price > :price", Event.class)
+		            .setParameter("price", price)
+		            .getResultList();
+
+		    if (events.isEmpty()) {
+		        throw new NotFoundException("No events found with tickets priced above: " + price);
+		    }
+
+		    return events;
 	}
 
 }

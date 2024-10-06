@@ -1,7 +1,10 @@
 package com.cn.cnEvent.entity;
 
+import java.util.List;
+
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class Event {
@@ -15,9 +18,21 @@ public class Event {
 
 	@Column(name = "description", nullable = false)
 	private String description;
-	
-	@OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private EventScheduleDetail eventScheduleDetail;
+
+	@OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+	@JsonManagedReference
+	private List<Ticket> ticket;
+
+	public List<Ticket> getTicket() {
+		return ticket;
+	}
+
+	public void setTicket(List<Ticket> ticket) {
+		this.ticket = ticket;
+	}
 
 	public EventScheduleDetail getEventScheduleDetail() {
 		return eventScheduleDetail;
@@ -50,25 +65,25 @@ public class Event {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
 
 	public Event() {
 	}
-	
+
 	public Event(Long id, String name, String description) {
-		
+
 		this.id = id;
 		this.name = name;
 		this.description = description;
-		
+
 	}
-	
-	public Event(Long id, String name, String description, EventScheduleDetail eventScheduleDetail) {
-	
+
+	public Event(Long id, String name, String description, EventScheduleDetail eventScheduleDetail, List<Ticket> ticket) {
+
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.eventScheduleDetail = eventScheduleDetail;
+		this.ticket = ticket;
 	}
 
 }

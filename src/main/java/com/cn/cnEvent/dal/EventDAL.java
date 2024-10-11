@@ -3,7 +3,6 @@ package com.cn.cnEvent.dal;
 import com.cn.cnEvent.entity.Event;
 import com.cn.cnEvent.entity.EventScheduleDetail;
 import com.cn.cnEvent.entity.Ticket;
-
 import java.util.List;
 
 public interface EventDAL {
@@ -12,19 +11,19 @@ public interface EventDAL {
 
 	List<Event> getAllEvents();
 
+	EventScheduleDetail getEventScheduleDetailByEventId(Long id);
+
+	List<Event> getAllEventsByLocation(String location);
+
+	List<Ticket> getAllTicketsOfEvent(Long id);
+
+	List<Event> getAllEventsHavingTicketPriceGreaterThan(Long price);
+
 	String save(Event item);
 
 	String delete(Long id);
 
+	String deleteEventScheduleDetail(Long id);
+
 	String update(Event updateEvent);
-
-	EventScheduleDetail getEventScheduleDetail(Long eventID);
-
-	EventScheduleDetail getEventScheduleDetailByLocation(String location);
-
-	String deleteDetail(Long id);
-
-	List<Ticket> getAllTicketsByEventId(Long id);
-
-	List<Event> getEventsByTicketPrice(Long price);
 }

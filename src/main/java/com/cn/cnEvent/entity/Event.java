@@ -1,14 +1,12 @@
 package com.cn.cnEvent.entity;
 
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Event {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -19,28 +17,21 @@ public class Event {
 	@Column(name = "description", nullable = false)
 	private String description;
 
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL)
 	private EventScheduleDetail eventScheduleDetail;
 
-	@OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
-	@JsonManagedReference
-	private List<Ticket> ticket;
+	@OneToMany(mappedBy = "event",cascade = CascadeType.ALL)
+	@JsonIgnoreProperties("event")
+	private List<Ticket> tickets = new ArrayList<>();
 
-	public List<Ticket> getTicket() {
-		return ticket;
-	}
-
-	public void setTicket(List<Ticket> ticket) {
-		this.ticket = ticket;
-	}
-
-	public EventScheduleDetail getEventScheduleDetail() {
-		return eventScheduleDetail;
-	}
-
-	public void setEventScheduleDetail(EventScheduleDetail eventScheduleDetail) {
-		this.eventScheduleDetail = eventScheduleDetail;
-	}
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinTable(name = "event_speaker", joinColumns = @JoinColumn(name = "event_id"), inverseJoinColumns = @JoinColumn(name = "speaker_id"), uniqueConstraints = {
+			@UniqueConstraint(columnNames = { "event_id", "speaker_id" }) })
+	private List<Speaker> speakers = new ArrayList<>();
+	
+//	@OneToOne(cascade=CascadeType.ALL)
+//	@JoinColumn(name="person_id")
+//	Person person;
 
 	public Long getId() {
 		return id;
@@ -62,28 +53,41 @@ public class Event {
 		return description;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public Event() {
-	}
-
-	public Event(Long id, String name, String description) {
-
-		this.id = id;
-		this.name = name;
-		this.description = description;
-
-	}
-
-	public Event(Long id, String name, String description, EventScheduleDetail eventScheduleDetail, List<Ticket> ticket) {
-
+	/*
+	public Event(Long id, String name, String description, EventScheduleDetail eventScheduleDetail) {
+		super();
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.eventScheduleDetail = eventScheduleDetail;
-		this.ticket = ticket;
+	}
+*/
+	
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
+	public EventScheduleDetail getEventScheduleDetail() {
+		return eventScheduleDetail;
+	}
+
+	public void setEventScheduleDetail(EventScheduleDetail eventScheduleDetail) {
+		this.eventScheduleDetail = eventScheduleDetail;
+	}
+
+	public List<Ticket> getTickets() {
+		return tickets;
+	}
+
+	public void setTickets(List<Ticket> tickets) {
+		this.tickets = tickets;
+	}
+
+	public List<Speaker> getSpeakers() {
+		return speakers;
+	}
+
+	public void setSpeakers(List<Speaker> speakers) {
+		this.speakers = speakers;
+	}
 }

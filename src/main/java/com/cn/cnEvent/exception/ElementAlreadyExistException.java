@@ -9,5 +9,6 @@ public class ElementAlreadyExistException extends RuntimeException{
     public ElementAlreadyExistException(String message)
     {
         super(message);
+        System.out.println(message);
     }
 }

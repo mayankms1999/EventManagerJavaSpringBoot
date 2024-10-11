@@ -1,15 +1,14 @@
 package com.cn.cnEvent.dal;
 
-import java.util.List;
-
 import com.cn.cnEvent.entity.EventScheduleDetail;
+
+import java.util.List;
 
 public interface EventScheduleDetailDAL {
 
-	List<EventScheduleDetail> getAllEventDetails();
-
-	void save(EventScheduleDetail newEventDetail);
-
 	EventScheduleDetail getById(Long id);
 
+	List<EventScheduleDetail> getAllEventScheduleDetails();
+
+	String save(EventScheduleDetail item);
 }
